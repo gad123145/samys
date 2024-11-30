@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">تعديل بيانات الشركة</h3>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('edit_company', id=company.id) }}" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">اسم الشركة المطورة</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ company.name }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="license_number" class="form-label">ترخيص الشركة</label>
+                            <input type="text" class="form-control" id="license_number" name="license_number" value="{{ company.license_number }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">نبذة عن الشركة</label>
+                            <textarea class="form-control" id="description" name="description" rows="4">{{ company.description }}</textarea>
+                        </div>
+                        
+                        {% if company.logo %}
+                        <div class="mb-3">
+                            <label class="form-label">الشعار الحالي</label>
+                            <div>
+                                <img src="{{ url_for('static', filename='uploads/' + company.logo) }}" alt="شعار الشركة" style="max-height: 100px;">
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="logo" class="form-label">تغيير الشعار</label>
+                            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                            <div class="form-text">اترك هذا الحقل فارغاً إذا كنت لا تريد تغيير الشعار</div>
+                        </div>
+
+                        <div class="text-end">
+                            <a href="{{ url_for('companies') }}" class="btn btn-secondary">إلغاء</a>
+                            <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

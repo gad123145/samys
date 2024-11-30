@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">إضافة عميل جديد</h3>
+            <a href="{{ url_for('customers') }}" class="btn btn-light">
+                <i class="fas fa-arrow-right"></i> العودة للقائمة
+            </a>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">الاسم <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">البريد الإلكتروني</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone" class="form-label">رقم الهاتف</label>
+                    <input type="text" class="form-control" id="phone" name="phone" 
+                           placeholder="مثال: +20123456789">
+                </div>
+
+                <div class="mb-3">
+                    <label for="facebook_id" class="form-label">معرف الفيس بوك</label>
+                    <input type="text" class="form-control" id="facebook_id" name="facebook_id">
+                </div>
+
+                <div class="mb-3">
+                    <label for="status" class="form-label">الحالة</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="new_client">عميل جديد</option>
+                        <option value="follow_up">متابعة</option>
+                        <option value="contracted">تم التعاقد</option>
+                        <option value="cancelled">ملغي</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notes" class="form-label">ملاحظات</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> حفظ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

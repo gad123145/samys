@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">استيراد العملاء من ملف Excel</h3>
+                    <a href="{{ url_for('customers') }}" class="btn btn-light">العودة للقائمة</a>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="excel_file" class="form-label">اختر ملف Excel</label>
+                            <input type="file" class="form-control" id="excel_file" name="excel_file" 
+                                   accept=".xlsx,.xls" required>
+                            <div class="form-text">يجب أن يكون الملف بصيغة .xlsx أو .xls</div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">تحميل الملف</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">إنشاء تذكرة جديدة</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="customer_id" class="form-label">العميل</label>
+                            <select class="form-select" id="customer_id" name="customer_id" required>
+                                <option value="">اختر العميل...</option>
+                                {% for customer in customers %}
+                                <option value="{{ customer.id }}">{{ customer.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">الموضوع</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">الوصف</label>
+                            <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">الأولوية</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="low">منخفضة</option>
+                                <option value="medium" selected>متوسطة</option>
+                                <option value="high">عالية</option>
+                            </select>
+                        </div>
+                        <div class="text-end">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">إلغاء</a>
+                            <button type="submit" class="btn btn-primary">إنشاء التذكرة</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

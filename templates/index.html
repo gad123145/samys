@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Search Section -->
+    <div class="card mb-4 search-card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">
+                <i class="fas fa-search me-2"></i>بحث متقدم
+            </h5>
+            <form id="searchForm" method="GET" action="{{ url_for('index') }}">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">اسم العميل</label>
+                            <input type="text" class="form-control" name="name" value="{{ request.args.get('name', '') }}" placeholder="ادخل اسم العميل">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">البريد الإلكتروني</label>
+                            <input type="email" class="form-control" name="email" value="{{ request.args.get('email', '') }}" placeholder="example@domain.com">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">رقم الهاتف</label>
+                            <input type="text" class="form-control" name="phone" value="{{ request.args.get('phone', '') }}" placeholder="05xxxxxxxx">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">الحالة</label>
+                            <select class="form-select" name="status">
+                                <option value="">كل الحالات</option>
+                                <option value="جديد" {% if request.args.get('status') == 'جديد' %}selected{% endif %}>جديد</option>
+                                <option value="نشط" {% if request.args.get('status') == 'نشط' %}selected{% endif %}>نشط</option>
+                                <option value="متوقف" {% if request.args.get('status') == 'متوقف' %}selected{% endif %}>متوقف</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">من تاريخ</label>
+                            <input type="date" class="form-control" name="from_date" value="{{ request.args.get('from_date', '') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">إلى تاريخ</label>
+                            <input type="date" class="form-control" name="to_date" value="{{ request.args.get('to_date', '') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-group w-100">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary flex-grow-1">
+                                    <i class="fas fa-search me-2"></i>بحث
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                    <i class="fas fa-redo me-2"></i>إعادة تعيين
+                                </button>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                    <i class="fas fa-file-export me-2"></i>تصدير
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">إجمالي العملاء</h6>
+                            <h2 class="card-title mb-0">{{ total_customers }}</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">العملاء النشطون</h6>
+                            <h2 class="card-title mb-0">{{ active_customers }}</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">المتابعات اليوم</h6>
+                            <h2 class="card-title mb-0">{{ today_followups }}</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">التذاكر المفتوحة</h6>
+                            <h2 class="card-title mb-0">{{ open_tickets }}</h2>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-ticket-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    {% if customers %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>الرقم</th>
+                            <th>اسم العميل</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>رقم الهاتف</th>
+                            <th>الحالة</th>
+                            <th>آخر تحديث</th>
+                            <th>المتابعة القادمة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-2">{{ customer.name[0].upper() }}</div>
+                                    <div>
+                                        <div class="fw-bold">{{ customer.name }}</div>
+                                        <small class="text-muted">{{ customer.customer_id }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ customer.email }}</td>
+                            <td>{{ customer.phone }}</td>
+                            <td>
+                                <span class="badge bg-{{ customer.status_color }}" id="status-{{ customer.id }}">
+                                    {{ customer.status }}
+                                </span>
+                            </td>
+                            <td>{{ customer.last_update.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if customer.next_followup %}
+                                <span class="badge bg-{{ 'danger' if customer.is_overdue else 'info' }}">
+                                    {{ customer.next_followup.strftime('%Y-%m-%d') }}
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">لا يوجد</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            onclick="window.location.href='{{ url_for('view_customer', id=customer.id) }}'">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-success quick-update" 
+                                            data-customer-id="{{ customer.id }}" data-action="complete">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-warning" 
+                                            onclick="window.location.href='{{ url_for('edit_customer', id=customer.id) }}'">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>لا توجد نتائج للبحث
+    </div>
+    {% endif %}
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تصدير البيانات</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="exportForm">
+                    <div class="mb-3">
+                        <label class="form-label">صيغة الملف</label>
+                        <select class="form-select" id="exportFormat">
+                            <option value="excel">Excel</option>
+                            <option value="pdf">PDF</option>
+                            <option value="csv">CSV</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">نطاق التاريخ</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="date" class="form-control" id="exportFromDate">
+                            </div>
+                            <div class="col-6">
+                                <input type="date" class="form-control" id="exportToDate">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" onclick="handleExport()">تصدير</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function resetForm() {
+    document.getElementById('searchForm').reset();
+    window.location.href = "{{ url_for('index') }}";
+}
+
+function handleExport() {
+    // تم تنفيذ هذه الوظيفة في ملف custom.js
+}
+</script>
+{% endblock %}

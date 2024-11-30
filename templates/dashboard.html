@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">لوحة التحكم</h2>
+    
+    <!-- إحصائيات سريعة -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">التذاكر المفتوحة</h5>
+                    <h2 class="card-text">{{ tickets|selectattr('status', 'equalto', 'open')|list|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">التذاكر المغلقة</h5>
+                    <h2 class="card-text">{{ tickets|selectattr('status', 'equalto', 'closed')|list|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">قيد المعالجة</h5>
+                    <h2 class="card-text">{{ tickets|selectattr('status', 'equalto', 'in_progress')|list|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">إجمالي التذاكر</h5>
+                    <h2 class="card-text">{{ tickets|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- قائمة التذاكر -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">التذاكر الحالية</h5>
+            <a href="{{ url_for('new_ticket') }}" class="btn btn-primary">تذكرة جديدة</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>رقم التذكرة</th>
+                            <th>الموضوع</th>
+                            <th>الحالة</th>
+                            <th>الأولوية</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>#{{ ticket.id }}</td>
+                            <td>{{ ticket.subject }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if ticket.status == 'closed' else 'warning' if ticket.status == 'in_progress' else 'primary' }}">
+                                    {{ ticket.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'danger' if ticket.priority == 'high' else 'warning' if ticket.priority == 'medium' else 'info' }}">
+                                    {{ ticket.priority }}
+                                </span>
+                            </td>
+                            <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                                <a href="#" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                <a href="#" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

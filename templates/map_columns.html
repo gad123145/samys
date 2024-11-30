@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">تحديد الأعمدة</h3>
+                    <a href="{{ url_for('import_customers') }}" class="btn btn-light">رجوع</a>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="file_path" value="{{ file_path }}">
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-2">
+                                <label class="form-label">الاسم</label>
+                                <select name="name_column" class="form-select" required>
+                                    <option value="">اختر العمود</option>
+                                    {% for column in columns %}
+                                    <option value="{{ column }}">{{ column }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">البريد الإلكتروني</label>
+                                <select name="email_column" class="form-select">
+                                    <option value="">اختر العمود</option>
+                                    {% for column in columns %}
+                                    <option value="{{ column }}">{{ column }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">رقم الهاتف</label>
+                                <select name="phone_column" class="form-select">
+                                    <option value="">اختر العمود</option>
+                                    {% for column in columns %}
+                                    <option value="{{ column }}">{{ column }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">معرف الفيس بوك</label>
+                                <select name="facebook_column" class="form-select">
+                                    <option value="">اختر العمود</option>
+                                    {% for column in columns %}
+                                    <option value="{{ column }}">{{ column }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">الحالة</label>
+                                <select name="status_column" class="form-select">
+                                    <option value="">اختر العمود</option>
+                                    {% for column in columns %}
+                                    <option value="{{ column }}">{{ column }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">ملاحظات</label>
+                                <select name="notes_column" class="form-select">
+                                    <option value="">اختر العمود</option>
+                                    {% for column in columns %}
+                                    <option value="{{ column }}">{{ column }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- عرض البيانات -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        {% for column in columns %}
+                                        <th>{{ column }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in preview_data %}
+                                    <tr>
+                                        {% for value in row %}
+                                        <td>{{ value }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="text-end mt-3">
+                            <button type="submit" class="btn btn-primary">استيراد العملاء</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

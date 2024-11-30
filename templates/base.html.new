@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة العملاء</title>
+    
+    <!-- Bootstrap RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {% if current_user.is_authenticated %}
+            <div class="col-md-2 px-0">
+                <div class="sidebar">
+                    <div class="text-center mb-4">
+                        <h5 class="text-white mb-0">نظام إدارة العملاء</h5>
+                    </div>
+                    <nav class="nav flex-column">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-2"></i>
+                            <span>الرئيسية</span>
+                        </a>
+                        
+                        <!-- زر كل العملاء مع القائمة المنبثقة -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="customerDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-users me-2"></i>
+                                <span>كل العملاء</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="customerDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='عميل جديد') }}">
+                                        <i class="fas fa-star text-primary me-2"></i>
+                                        <span>عميل جديد</span>
+                                        <span class="badge bg-primary ms-auto">{{ customer_counts.new_customers }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='عميل محتمل') }}">
+                                        <i class="fas fa-user-plus text-info me-2"></i>
+                                        <span>عميل محتمل</span>
+                                        <span class="badge bg-info ms-auto">{{ customer_counts.potential_customers }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='عميل مهتم') }}">
+                                        <i class="fas fa-heart text-danger me-2"></i>
+                                        <span>عميل مهتم</span>
+                                        <span class="badge bg-danger ms-auto">{{ customer_counts.interested_customers }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='تم الرد') }}">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        <span>تم الرد</span>
+                                        <span class="badge bg-success ms-auto">{{ customer_counts.responded }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='لم يتم الرد') }}">
+                                        <i class="fas fa-times text-warning me-2"></i>
+                                        <span>لم يتم الرد</span>
+                                        <span class="badge bg-warning ms-auto">{{ customer_counts.no_response }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='تم تحديد موعد') }}">
+                                        <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                        <span>تم تحديد موعد</span>
+                                        <span class="badge bg-primary ms-auto">{{ customer_counts.appointment_set }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='ما بعد الاجتماع') }}">
+                                        <i class="fas fa-handshake text-info me-2"></i>
+                                        <span>ما بعد الاجتماع</span>
+                                        <span class="badge bg-info ms-auto">{{ customer_counts.post_meeting }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='تم الحجز') }}">
+                                        <i class="fas fa-bookmark text-success me-2"></i>
+                                        <span>تم الحجز</span>
+                                        <span class="badge bg-success ms-auto">{{ customer_counts.booked }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='تم الإلغاء') }}">
+                                        <i class="fas fa-ban text-danger me-2"></i>
+                                        <span>تم الإلغاء</span>
+                                        <span class="badge bg-danger ms-auto">{{ customer_counts.cancelled }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='تم البيع') }}">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <span>تم البيع</span>
+                                        <span class="badge bg-success ms-auto">{{ customer_counts.sold }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='مؤجل') }}">
+                                        <i class="fas fa-clock text-warning me-2"></i>
+                                        <span>مؤجل</span>
+                                        <span class="badge bg-warning ms-auto">{{ customer_counts.postponed }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('customers', status='إعادة البيع') }}">
+                                        <i class="fas fa-redo text-info me-2"></i>
+                                        <span>إعادة البيع</span>
+                                        <span class="badge bg-info ms-auto">{{ customer_counts.resale }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- قسم العقارات -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="propertiesDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-building me-2"></i>
+                                <span>العقارات</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="propertiesDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('properties') }}">
+                                        <i class="fas fa-list text-primary me-2"></i>
+                                        <span>قائمة العقارات</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('add_property') }}">
+                                        <i class="fas fa-plus-circle text-success me-2"></i>
+                                        <span>إضافة عقار</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- قسم الشركات المطورة -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="companiesDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-city me-2"></i>
+                                <span>الشركات المطورة</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="companiesDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('companies') }}">
+                                        <i class="fas fa-list text-primary me-2"></i>
+                                        <span>قائمة الشركات</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('add_company') }}">
+                                        <i class="fas fa-plus-circle text-success me-2"></i>
+                                        <span>إضافة شركة</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="nav-section">
+                            <div class="nav-section-title">الإجراءات السريعة</div>
+                            <a class="nav-link {% if request.endpoint == 'new_customer' %}active{% endif %}" 
+                               href="{{ url_for('new_customer') }}">
+                                <i class="fas fa-user-plus me-2"></i>
+                                <span>إضافة عميل جديد</span>
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Main Content -->
+            <div class="col-md-10 {% if not current_user.is_authenticated %}offset-md-1{% endif %}">
+                <div class="content-wrapper">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

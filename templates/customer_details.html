@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">تفاصيل العميل</h3>
+                    <a href="{{ url_for('customers') }}" class="btn btn-light">العودة للقائمة</a>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">الاسم</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ customer.name }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">البريد الإلكتروني</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ customer.email }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">رقم الهاتف</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ customer.phone }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="status" class="form-label">الحالة</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="new_client" {% if customer.status == 'new_client' %}selected{% endif %}>عميل جديد</option>
+                                <option value="potential_client" {% if customer.status == 'potential_client' %}selected{% endif %}>عميل محتمل</option>
+                                <option value="interested_client" {% if customer.status == 'interested_client' %}selected{% endif %}>عميل مهتم</option>
+                                <option value="responded" {% if customer.status == 'responded' %}selected{% endif %}>تم الرد</option>
+                                <option value="no_response" {% if customer.status == 'no_response' %}selected{% endif %}>لم يتم الرد</option>
+                                <option value="appointment_set" {% if customer.status == 'appointment_set' %}selected{% endif %}>تم تحديد موعد</option>
+                                <option value="post_meeting" {% if customer.status == 'post_meeting' %}selected{% endif %}>ما بعد الاجتماع</option>
+                                <option value="booked" {% if customer.status == 'booked' %}selected{% endif %}>تم الحجز</option>
+                                <option value="cancelled" {% if customer.status == 'cancelled' %}selected{% endif %}>تم الإلغاء</option>
+                                <option value="sold" {% if customer.status == 'sold' %}selected{% endif %}>تم البيع</option>
+                                <option value="postponed" {% if customer.status == 'postponed' %}selected{% endif %}>مؤجل</option>
+                                <option value="resale" {% if customer.status == 'resale' %}selected{% endif %}>إعادة البيع</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="next_follow_up" class="form-label">موعد المتابعة القادم</label>
+                            <input type="date" class="form-control" id="next_follow_up" name="next_follow_up" 
+                                value="{{ customer.next_follow_up.strftime('%Y-%m-%d') if customer.next_follow_up else '' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">ملاحظات</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="4">{{ customer.notes }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">تاريخ الإنشاء</label>
+                            <p class="form-control-static">{{ customer.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">آخر تحديث</label>
+                            <p class="form-control-static">{{ customer.updated_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
